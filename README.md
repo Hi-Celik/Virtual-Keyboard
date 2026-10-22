@@ -1,4 +1,4 @@
-# CYBER_DECK – Touchscreen Virtual Keyboard
+# CyberKeyboard – Touchscreen Virtual Keyboard
 
 A modern, futuristic, hardware-accelerated virtual keyboard for touchscreens, with support for multiple languages.
 
