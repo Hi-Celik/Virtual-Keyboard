@@ -1,0 +1,14 @@
+# .NET derleme ve çıktı klasörleri
+bin/
+obj/
+publish/
+
+# Geçici log ve çıktı dosyaları
+*.log
+err.txt
+out.txt
+
+# IDE ve araç klasörleri
+.vs/
+.idea/
+.agents/

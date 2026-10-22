@@ -1,0 +1,1695 @@
+<Window x:Class="CyberKeyboard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:graphics="clr-namespace:CyberKeyboard.Graphics"
+        xmlns:controls="clr-namespace:CyberKeyboard.Controls"
+        xmlns:models="clr-namespace:CyberKeyboard.Models"
+        xmlns:native="clr-namespace:CyberKeyboard.Native"
+        mc:Ignorable="d"
+        Title="CYBER_DECK TOUCH KEYBOARD"
+        Height="560" Width="1240"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowActivated="False"
+        Focusable="False"
+        Topmost="True"
+        ShowInTaskbar="True"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- Outer Shell with Crisp Cyber Border -->
+    <Border x:Name="MainShell"
+            CornerRadius="12"
+            BorderThickness="1.5"
+            BorderBrush="#9000F0FF"
+            Background="#F2080D18"
+            Margin="4">
+
+        <Grid>
+            <!-- Hardware Accelerated Silky Smooth Particles and Wave Grid (0 GC allocations) -->
+            <graphics:CyberBackgroundCanvas x:Name="BackgroundCanvas"/>
+
+            <!-- Main Content Layout -->
+            <Grid Margin="10,8,10,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <!-- Row 0: Top Cyber HUD Bar -->
+                    <RowDefinition Height="*"/>    <!-- Row 1: Cyber Audio Player Deck & File Tree Browser -->
+                    <RowDefinition Height="Auto"/> <!-- Row 2: Ergonomic Keyboard Deck Container -->
+                </Grid.RowDefinitions>
+
+                <!-- TOP CYBER HUD BAR -->
+                <Border Grid.Row="0"
+                        CornerRadius="7"
+                        Background="#700D1527"
+                        BorderBrush="#4500F0FF"
+                        BorderThickness="1"
+                        Padding="10,5"
+                        Margin="0,0,0,6"
+                        MouseLeftButtonDown="OnTopBarMouseDown">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/> <!-- Logo / Title / Target App -->
+                            <ColumnDefinition Width="*"/>    <!-- Language Selector & Quick Actions -->
+                            <ColumnDefinition Width="Auto"/> <!-- Controls -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- LEFT: Brand & Active Target Window -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse x:Name="BrandLedDot" Width="9" Height="9" Fill="#00FF88" Margin="0,0,7,0"/>
+                            <TextBlock x:Name="TxtBrandTitle"
+                                       Text="CYBER_DECK"
+                                       FontWeight="Bold"
+                                       FontSize="13"
+                                       Foreground="#00F0FF"
+                                       FontFamily="Segoe UI, Consolas"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtBrandCursor"
+                                       Text="█"
+                                       FontWeight="Bold"
+                                       FontSize="13"
+                                       Foreground="#00F0FF"
+                                       FontFamily="Consolas"
+                                       VerticalAlignment="Center"
+                                       Margin="2,0,0,0"
+                                       Width="10"
+                                       TextAlignment="Center"
+                                       Visibility="Collapsed"/>
+                            <Border x:Name="BadgeCarrierBpm"
+                                    CornerRadius="3"
+                                    Background="#25FF0055"
+                                    BorderBrush="#FF0055"
+                                    BorderThickness="1"
+                                    Padding="5,2"
+                                    Margin="7,0,0,0"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed">
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Ellipse x:Name="CarrierLedDot" Width="6" Height="6" Fill="#00F0FF" Margin="0,0,5,0"/>
+                                    <TextBlock Text="CARRIER: 118_BPM" FontSize="9" FontWeight="Bold" Foreground="#00F0FF" FontFamily="Consolas"/>
+                                </StackPanel>
+                            </Border>
+                            <TextBlock Text=" // " Foreground="#5000F0FF" VerticalAlignment="Center" Margin="4,0"/>
+                            <!-- Target Window Display -->
+                            <Border CornerRadius="4" Background="#2800F0FF" Padding="5,2" VerticalAlignment="Center">
+                                <TextBlock x:Name="TxtTargetApp"
+                                           Text="TARGET: DETECTING..."
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           Foreground="#85E0FF"
+                                           FontFamily="Consolas, monospace"/>
+                            </Border>
+                        </StackPanel>
+
+                        <!-- CENTER: Language Switcher Dropdown & Quick Actions -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <!-- Typing Language Dropdown (Sleek Space-Saving Cyber Selector) -->
+                            <TextBlock x:Name="TxtTypingLangLabel"
+                                       Text="⌨️ DİL:"
+                                       Foreground="#80A8C8"
+                                       FontSize="10"
+                                       FontWeight="Bold"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,5,0"/>
+                            <ComboBox x:Name="CmbTypingLang"
+                                      Style="{DynamicResource CyberComboBoxStyle}"
+                                      Width="98"
+                                      Height="22"
+                                      Focusable="False"
+                                      SelectionChanged="OnTypingLangSelectionChanged"
+                                      ToolTip="Yazım Dili / Keyboard Layout"/>
+
+                            <Rectangle Width="1" Height="14" Fill="#3000F0FF" Margin="8,0"/>
+
+                            <!-- Quick Action Buttons -->
+                            <Button x:Name="BtnCut" Content="✂ KES" Style="{DynamicResource HudButtonStyle}" Padding="6,2" Margin="1.5,0" Click="OnCutClick"/>
+                            <Button x:Name="BtnCopy" Content="📋 KOPYALA" Style="{DynamicResource HudButtonStyle}" Padding="6,2" Margin="1.5,0" Click="OnCopyClick"/>
+                            <Button x:Name="BtnPaste" Content="📄 YAPIŞTIR" Style="{DynamicResource HudButtonStyle}" Padding="6,2" Margin="1.5,0" Click="OnPasteClick"/>
+                            <Button x:Name="BtnSelectAll" Content="🔍 TÜMÜ" Style="{DynamicResource HudButtonStyle}" Padding="6,2" Margin="1.5,0" Click="OnSelectAllClick"/>
+                            <Button x:Name="BtnUndo" Content="↺ GERİ AL" Style="{DynamicResource HudButtonStyle}" Padding="6,2" Margin="1.5,0" Click="OnUndoClick"/>
+                        </StackPanel>
+
+                        <!-- RIGHT: Screen / Player / Key Size / Fullscreen / Numpad / Theme / UI Lang / Window -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Screen Switcher Button -->
+                            <Button x:Name="BtnScreen"
+                                    Content="🖥️ EKRAN"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnToggleMonitorSelectorClick"
+                                    ToolTip="Monitör Seçim Listesini Aç / Switch Monitor"/>
+
+                            <!-- Audio Player Deck Toggle -->
+                            <Button x:Name="BtnPlayerToggle"
+                                    Content="🎵 ÇALAR"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnTogglePlayerClick"
+                                    ToolTip="Medya Panelini Göster / Gizle"/>
+
+                            <!-- Key Height / Size Switcher -->
+                            <Button x:Name="BtnKeyHeight"
+                                    Content="↕ 68px"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnCycleKeyHeightClick"
+                                    ToolTip="Tuş yüksekliğini ekranınıza göre ayarlayın"/>
+
+                            <!-- Fullscreen Toggle -->
+                            <Button x:Name="BtnFullscreen"
+                                    Content="⛶ TAM EKRAN"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnToggleFullscreenClick"/>
+
+                            <!-- Numpad Toggle -->
+                            <Button x:Name="BtnNumpadToggle"
+                                    Content="🔢 NUMPAD"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnToggleNumpadClick"/>
+
+                            <!-- Theme Switcher -->
+                            <Button x:Name="BtnTheme"
+                                    Content="🎨 TEMA"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnCycleThemeClick"
+                                    ToolTip="Siber Temayı Değiştir"/>
+
+                            <!-- UI Interface Language Switcher (TR, EN, FR, DE) -->
+                            <Button x:Name="BtnUiLang"
+                                    Content="🌐 UI: TR"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnCycleUiLanguageClick"
+                                    ToolTip="Arayüz Dili / UI Language (TR, EN, FR, DE)"/>
+
+                            <!-- Profile & Settings Manager -->
+                            <Button x:Name="BtnProfileManager"
+                                    Content="⚙️ PROFİL"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnToggleProfileManagerClick"
+                                    ToolTip="Ayarlar ve Profil Yöneticisi / Settings &amp; Profiles"/>
+
+                            <!-- Sound Toggle -->
+                            <Button x:Name="BtnSoundToggle"
+                                    Content="🔊 SES"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="5,2"
+                                    Margin="1.5,0"
+                                    Click="OnToggleSoundClick"/>
+
+                            <!-- Minimize & Close -->
+                            <Button Content="—" Style="{DynamicResource WindowMinCloseStyle}" Margin="3,0,1,0" Click="OnMinimizeClick"/>
+                            <Button Content="✕" Style="{DynamicResource WindowMinCloseStyle}" Margin="1,0,0,0" Click="OnCloseClick"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- FLOATING MONITOR SELECTOR OVERLAY (Topmost inside Deck) -->
+                <Border x:Name="MonitorSelectorPopup"
+                        Grid.Row="1"
+                        Grid.RowSpan="2"
+                        Panel.ZIndex="999"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,-2,8,0"
+                        Width="360"
+                        CornerRadius="8"
+                        Background="#F5070D18"
+                        BorderBrush="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                        BorderThickness="1.5"
+                        Padding="12,10"
+                        Visibility="Collapsed">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#00F0FF" BlurRadius="22" ShadowDepth="3" Opacity="0.5"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Header -->
+                        <Grid Grid.Row="0" Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="🖥️ " FontSize="13" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TxtMonitorSelectorTitle"
+                                           Text="MONİTÖR SEÇİMİ // DISPLAY MATRIX"
+                                           FontWeight="Bold"
+                                           FontSize="11"
+                                           Foreground="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                           FontFamily="Segoe UI, Consolas"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="✕"
+                                    Width="22" Height="20"
+                                    Style="{DynamicResource WindowMinCloseStyle}"
+                                    Click="OnCloseMonitorSelectorClick"/>
+                        </Grid>
+
+                        <!-- Subtitle -->
+                        <TextBlock x:Name="TxtMonitorSelectorSubtitle"
+                                   Grid.Row="1"
+                                   Text="Klavyeyi taşımak istediğiniz monitöre dokunun:"
+                                   FontSize="10"
+                                   Foreground="#70A0C0"
+                                   Margin="0,0,0,8"/>
+
+                        <!-- Monitors List -->
+                        <ItemsControl x:Name="IcMonitors" Grid.Row="2">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type native:ScreenInfo}">
+                                    <Border CornerRadius="5"
+                                            Background="#1800F0FF"
+                                            BorderBrush="#2500F0FF"
+                                            BorderThickness="1"
+                                            Padding="8,6"
+                                            Margin="0,0,0,5"
+                                            Cursor="Hand"
+                                            MouseDown="OnMonitorCardClick"
+                                            TouchDown="OnMonitorCardTouch">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                        <Setter Property="Background" Value="#3000F0FF"/>
+                                                        <Setter Property="BorderBrush" Value="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"/>
+                                                        <Setter Property="BorderThickness" Value="1.5"/>
+                                                    </DataTrigger>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="#2500F0FF"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="34"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Monitor Icon -->
+                                            <TextBlock Grid.Column="0" Text="🖥️" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                            <!-- Details -->
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Title}" FontWeight="Bold" FontSize="11" Foreground="#FFFFFF"/>
+                                                    <TextBlock Text="{Binding PositionString, StringFormat=' ({0})'}" FontSize="9" Foreground="#6090B0" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                                                </StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                                    <Border CornerRadius="3" Background="#2000F0FF" Padding="4,1" Margin="0,0,6,0">
+                                                        <TextBlock Text="{Binding DeviceTag}" FontSize="8" FontWeight="Bold" Foreground="#80E0FF"/>
+                                                    </Border>
+                                                    <TextBlock Text="{Binding ResolutionString}" FontSize="10" FontWeight="SemiBold" Foreground="#A0C8E8" FontFamily="Consolas"/>
+                                                </StackPanel>
+                                            </StackPanel>
+
+                                            <!-- Active Indicator -->
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
+                                                <Border CornerRadius="3"
+                                                        Background="#3000FF88"
+                                                        BorderBrush="#00FF88"
+                                                        BorderThickness="1"
+                                                        Padding="6,2"
+                                                        Visibility="{Binding ActiveBadgeVisibility}">
+                                                    <TextBlock Text="{Binding ActiveBadgeText}" FontSize="9" FontWeight="Bold" Foreground="#00FF88"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Refresh Button -->
+                        <Button x:Name="BtnRefreshScreens"
+                                Grid.Row="3"
+                                Content="🔄 EKRANLARI YENİLE"
+                                Style="{DynamicResource HudButtonStyle}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,4,0,0"
+                                Padding="0,4"
+                                Click="OnRefreshScreensClick"/>
+                    </Grid>
+                </Border>
+
+                <!-- FLOATING SETTINGS & PROFILE MANAGER OVERLAY (Topmost inside Deck) -->
+                <Border x:Name="ProfileManagerPopup"
+                        Grid.Row="1"
+                        Grid.RowSpan="2"
+                        Panel.ZIndex="1000"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,-2,8,0"
+                        Width="440"
+                        CornerRadius="8"
+                        Background="#F8070D18"
+                        BorderBrush="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                        BorderThickness="1.5"
+                        Padding="14,12"
+                        Visibility="Collapsed">
+                    <Border.Effect>
+                        <DropShadowEffect Color="#00F0FF" BlurRadius="25" ShadowDepth="4" Opacity="0.55"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- 0. Header -->
+                            <RowDefinition Height="Auto"/> <!-- 1. Active Profile Status -->
+                            <RowDefinition Height="Auto"/> <!-- 2. Quick Name Chips -->
+                            <RowDefinition Height="Auto"/> <!-- 3. Save New / Update Controls -->
+                            <RowDefinition Height="Auto"/> <!-- 4. Saved Profiles List Title -->
+                            <RowDefinition Height="Auto" MaxHeight="240"/> <!-- 5. Profiles List -->
+                            <RowDefinition Height="Auto"/> <!-- 6. Feedback text -->
+                        </Grid.RowDefinitions>
+
+                        <!-- 0. Header -->
+                        <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="⚙️ " FontSize="13" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TxtProfileManagerTitle"
+                                           Text="AYARLAR &amp; PROFİL YÖNETİCİSİ // CONFIG MATRIX"
+                                           FontWeight="Bold"
+                                           FontSize="11"
+                                           Foreground="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                           FontFamily="Segoe UI, Consolas"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="✕"
+                                    Width="22" Height="20"
+                                    Style="{DynamicResource WindowMinCloseStyle}"
+                                    Click="OnCloseProfileManagerClick"/>
+                        </Grid>
+
+                        <!-- 1. Active Profile Status & Auto-save Indicator -->
+                        <Border Grid.Row="1"
+                                CornerRadius="5"
+                                Background="#1500F0FF"
+                                BorderBrush="#2500F0FF"
+                                BorderThickness="1"
+                                Padding="8,5"
+                                Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock x:Name="TxtActiveProfileLabel" Text="Aktif Profil:" FontSize="10" Foreground="#70A0C0" Margin="0,0,5,0"/>
+                                    <TextBlock x:Name="TxtActiveProfileDisplay" Text="Varsayılan" FontSize="11" FontWeight="Bold" Foreground="#FFFFFF"/>
+                                </StackPanel>
+                                <TextBlock x:Name="TxtAutoSavedHint"
+                                           Grid.Column="1"
+                                           Text="● Tüm ayarlar anlık otomatik kaydedilir"
+                                           FontSize="9"
+                                           Foreground="#00FF88"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- 2. Quick Preset Chips -->
+                        <StackPanel Grid.Row="2" Margin="0,0,0,6">
+                            <TextBlock x:Name="TxtQuickPresetsLabel" Text="Hızlı İsimler:" FontSize="9" Foreground="#6090B0" Margin="0,0,0,4"/>
+                            <WrapPanel Orientation="Horizontal">
+                                <Button Content="📱 Dokunmatik" Style="{DynamicResource HudButtonStyle}" Padding="6,2" FontSize="9" Margin="0,0,4,4" Click="OnQuickNameChipClick" Tag="📱 Dokunmatik Monitör"/>
+                                <Button Content="🌆 Gece Modu" Style="{DynamicResource HudButtonStyle}" Padding="6,2" FontSize="9" Margin="0,0,4,4" Click="OnQuickNameChipClick" Tag="🌆 Gece Modu"/>
+                                <Button Content="💼 Ofis / Yazı" Style="{DynamicResource HudButtonStyle}" Padding="6,2" FontSize="9" Margin="0,0,4,4" Click="OnQuickNameChipClick" Tag="💼 Ofis / Yazı"/>
+                                <Button Content="🎮 Oyun Modu" Style="{DynamicResource HudButtonStyle}" Padding="6,2" FontSize="9" Margin="0,0,4,4" Click="OnQuickNameChipClick" Tag="🎮 Oyun Modu"/>
+                                <Button Content="⌨️ Minimal" Style="{DynamicResource HudButtonStyle}" Padding="6,2" FontSize="9" Margin="0,0,4,4" Click="OnQuickNameChipClick" Tag="⌨️ Minimalist"/>
+                                <Button Content="⚡ Retro-Glitch" Style="{DynamicResource HudButtonStyle}" Padding="6,2" FontSize="9" Margin="0,0,4,4" Click="OnQuickNameChipClick" Tag="⚡ Retro-Futurist Glitch"/>
+                                <Button Content="🌴 80's Chill" Style="{DynamicResource HudButtonStyle}" Padding="6,2" FontSize="9" Margin="0,0,4,4" Click="OnQuickNameChipClick" Tag="🌴 80's Chill Neon"/>
+                            </WrapPanel>
+                        </StackPanel>
+
+                        <!-- 3. New Profile Name Input & Save / Update Buttons -->
+                        <Grid Grid.Row="3" Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" Margin="0,0,5,0">
+                                <TextBox x:Name="TxtNewProfileName"
+                                         Height="28"
+                                         Background="#30000000"
+                                         Foreground="#FFFFFF"
+                                         CaretBrush="#00F0FF"
+                                         SelectionBrush="#6000F0FF"
+                                         BorderBrush="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                         BorderThickness="1.2"
+                                         Padding="7,4"
+                                         FontSize="11"
+                                         FontFamily="Segoe UI, Consolas"
+                                         VerticalContentAlignment="Center"
+                                         PreviewMouseDown="OnProfileNameTextBoxMouseDown"
+                                         PreviewTouchDown="OnProfileNameTextBoxTouchDown"
+                                         GotFocus="OnProfileNameTextBoxGotFocus"
+                                         KeyDown="OnProfileNameTextBoxKeyDown"
+                                         TextChanged="OnProfileNameTextBoxTextChanged"
+                                         ToolTip="Yeni profil ismi yazın (Klavyenizden veya ekrandaki tuşlarla)"/>
+                                <TextBlock x:Name="TxtNewProfileNamePlaceholder"
+                                           Text="Yeni profil adı yazın..."
+                                           Foreground="#60A0D0"
+                                           FontSize="11"
+                                           FontFamily="Segoe UI, Consolas"
+                                           VerticalAlignment="Center"
+                                           Margin="8,0,0,0"
+                                           IsHitTestVisible="False"/>
+                            </Grid>
+                            <Button x:Name="BtnSaveNewProfile"
+                                    Grid.Column="1"
+                                    Content="💾 YENİ KAYDET"
+                                    Style="{DynamicResource HudSpecialButtonStyle}"
+                                    Padding="8,4"
+                                    FontSize="10"
+                                    Margin="0,0,4,0"
+                                    Click="OnSaveNewProfileClick"
+                                    ToolTip="Mevcut ayarları yeni bir profil olarak kaydet"/>
+                            <Button x:Name="BtnUpdateCurrentProfile"
+                                    Grid.Column="2"
+                                    Content="🔄 GÜNCELLE"
+                                    Style="{DynamicResource HudButtonStyle}"
+                                    Padding="8,4"
+                                    FontSize="10"
+                                    Click="OnUpdateCurrentProfileClick"
+                                    ToolTip="Mevcut profilin üzerine güncel ayarları kaydet"/>
+                        </Grid>
+
+                        <!-- 4. Saved Profiles List Title -->
+                        <TextBlock x:Name="TxtSavedProfilesTitle"
+                                   Grid.Row="4"
+                                   Text="Kayıtlı Profiller:"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"
+                                   Foreground="#80A8C8"
+                                   Margin="0,0,0,5"/>
+
+                        <!-- 5. Profiles List -->
+                        <ScrollViewer Grid.Row="5"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled"
+                                      PanningMode="VerticalOnly"
+                                      MaxHeight="210"
+                                      Margin="0,0,0,6">
+                            <ItemsControl x:Name="IcProfiles">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type models:KeyboardProfile}">
+                                        <Border CornerRadius="5"
+                                                Background="#1200F0FF"
+                                                BorderBrush="#2000F0FF"
+                                                BorderThickness="1"
+                                                Padding="8,6"
+                                                Margin="0,0,0,4">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Details -->
+                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="11" Foreground="#FFFFFF"/>
+                                                    <TextBlock Text="{Binding DisplayDetails}" FontSize="9" Foreground="#6595B5" FontFamily="Consolas" Margin="0,2,0,0"/>
+                                                </StackPanel>
+
+                                                <!-- Action Buttons: [✓ YÜKLE] [💾] [🗑] -->
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                                                    <Button Content="✓ YÜKLE"
+                                                            Style="{DynamicResource PlayerCtrlSpecialButtonStyle}"
+                                                            Padding="6,3"
+                                                            FontSize="9"
+                                                            Margin="0,0,3,0"
+                                                            Click="OnLoadProfileClick"
+                                                            Tag="{Binding}"
+                                                            ToolTip="Bu profili hemen uygula / Apply profile"/>
+                                                    <Button Content="💾"
+                                                            Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                            Width="22" Height="22"
+                                                            FontSize="10"
+                                                            Margin="0,0,3,0"
+                                                            Click="OnOverwriteProfileClick"
+                                                            Tag="{Binding}"
+                                                            ToolTip="Mevcut ayarları bu profilin üzerine yaz / Overwrite"/>
+                                                    <Button Content="🗑"
+                                                            Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                            Width="22" Height="22"
+                                                            FontSize="10"
+                                                            Click="OnDeleteProfileClick"
+                                                            Tag="{Binding}"
+                                                            ToolTip="Profili Sil / Delete"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+
+                        <!-- 6. Feedback Message -->
+                        <TextBlock x:Name="TxtProfileStatusFeedback"
+                                   Grid.Row="6"
+                                   Text=""
+                                   FontSize="10"
+                                   Foreground="#00FF88"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,2,0,0"
+                                   Visibility="Collapsed"/>
+                    </Grid>
+                </Border>
+
+                <!-- ROW 1: CYBER AUDIO PLAYER & FILE TREE BROWSER & DIGITAL CHRONO DECK -->
+                <Border x:Name="AudioPlayerDeck"
+                        Grid.Row="1"
+                        CornerRadius="9"
+                        Background="#F2060914"
+                        BorderBrush="#5000F0FF"
+                        BorderThickness="1.5"
+                        Padding="8,6"
+                        Margin="0,0,0,8"
+                        AllowDrop="True"
+                        PreviewDragOver="OnAudioDeckDragOver"
+                        Drop="OnAudioDeckDrop"
+                        Visibility="Collapsed">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <!-- 0. LEFT: CYBER PLAYER & CONTROLS -->
+                            <ColumnDefinition Width="330" MinWidth="280" MaxWidth="370"/>
+                            <!-- 1. SEPARATOR -->
+                            <ColumnDefinition Width="6"/>
+                            <!-- 2. CENTER: PLAYLIST & FILE TREE (Dörtte bir genişliğinde, ortada) -->
+                            <ColumnDefinition Width="1*" MinWidth="240" MaxWidth="360"/>
+                            <!-- 3. SEPARATOR -->
+                            <ColumnDefinition Width="6"/>
+                            <!-- 4. RIGHT: ŞIK DİJİTAL SAAT & AY TAKVİMİ HUD PANELİ -->
+                            <ColumnDefinition Width="2*" MinWidth="580"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- ================= 0. LEFT: CYBER PLAYER & CONTROLS (HIGH CONTRAST) ================= -->
+                        <Border Grid.Column="0"
+                                CornerRadius="7"
+                                Background="#F5080E1C"
+                                BorderBrush="#4000F0FF"
+                                BorderThickness="1.2"
+                                Padding="10,7">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/> <!-- Header + Track Title + Visualizer -->
+                                    <RowDefinition Height="Auto"/> <!-- Progress / Seek Slider -->
+                                    <RowDefinition Height="Auto"/> <!-- Playback Buttons (Prev, Play, Next, Vol) -->
+                                    <RowDefinition Height="*"/>    <!-- Live Typing Stream (Docked at bottom) -->
+                                </Grid.RowDefinitions>
+
+                                <!-- 1. Track Info & Visualizer -->
+                                <Grid Grid.Row="0" Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="90"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="CYBER_AUDIO // MEDIA ENGINE"
+                                                   FontSize="9"
+                                                   FontWeight="Bold"
+                                                   Foreground="#00F0FF"
+                                                   FontFamily="Consolas, monospace"/>
+                                        <TextBlock x:Name="TxtTrackTitle"
+                                                   Text="NO TRACK LOADED — DRAG &amp; DROP AUDIO"
+                                                   FontSize="12"
+                                                   FontWeight="Bold"
+                                                   Foreground="#FFFFFF"
+                                                   FontFamily="Segoe UI, Consolas"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- Equalizer Visualizer (Crisp & vivid) -->
+                                    <controls:EqualizerVisualizer x:Name="AudioVisualizer"
+                                                                  Grid.Column="1"
+                                                                  Height="22"
+                                                                  Opacity="1.0"
+                                                                  VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <!-- 2. Seek Bar & Time -->
+                                <Grid Grid.Row="1" Margin="0,2,0,5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Modern Cyber Seek Slider -->
+                                    <Slider x:Name="SeekSlider"
+                                            Grid.Row="0"
+                                            Style="{DynamicResource ModernCyberSliderStyle}"
+                                            Minimum="0" Maximum="100"
+                                            Value="0"
+                                            Focusable="False"
+                                            IsMoveToPointEnabled="True"
+                                            ValueChanged="OnSeekSliderValueChanged"
+                                            PreviewMouseDown="OnSeekSliderMouseDown"
+                                            PreviewMouseUp="OnSeekSliderMouseUp"
+                                            PreviewTouchDown="OnSeekSliderTouchDown"
+                                            PreviewTouchUp="OnSeekSliderTouchUp"/>
+
+                                    <Grid Grid.Row="1" Margin="2,2,2,0">
+                                        <TextBlock x:Name="TxtCurrentTime"
+                                                   Text="00:00"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"
+                                                   Foreground="#00FFCC"
+                                                   FontFamily="Consolas"
+                                                   HorizontalAlignment="Left"/>
+                                        <TextBlock x:Name="TxtTotalTime"
+                                                   Text="00:00"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"
+                                                   Foreground="#85E0FF"
+                                                   FontFamily="Consolas"
+                                                   HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </Grid>
+
+                                <!-- 3. Player Controls & Volume -->
+                                <Grid Grid.Row="2" Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Playback buttons -->
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button Content="⏮" Style="{DynamicResource PlayerCtrlButtonStyle}" Click="OnPlayerPrevClick" ToolTip="Önceki Parça"/>
+                                        <Button x:Name="BtnPlayPause" Content="▶" Width="34" Height="28" FontSize="13" Style="{DynamicResource PlayerCtrlSpecialButtonStyle}" Click="OnPlayerPlayPauseClick" ToolTip="Oynat / Duraklat"/>
+                                        <Button Content="⏹" Style="{DynamicResource PlayerCtrlButtonStyle}" Click="OnPlayerStopClick" ToolTip="Durdur"/>
+                                        <Button Content="⏭" Style="{DynamicResource PlayerCtrlButtonStyle}" Click="OnPlayerNextClick" ToolTip="Sonraki Parça"/>
+                                        <Button x:Name="BtnShuffle" Content="🔀" Style="{DynamicResource PlayerCtrlButtonStyle}" Click="OnPlayerShuffleClick" ToolTip="Karışık Çalma"/>
+                                        <Button x:Name="BtnRepeat" Content="🔁" Style="{DynamicResource PlayerCtrlButtonStyle}" Click="OnPlayerRepeatClick" ToolTip="Tekrar Çalma"/>
+                                    </StackPanel>
+
+                                    <!-- Modern Cyber Volume Slider -->
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <TextBlock Text="🔊" Foreground="#00F0FF" FontSize="11" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                        <Slider x:Name="VolSlider"
+                                                Width="70"
+                                                Style="{DynamicResource ModernCyberSliderStyle}"
+                                                Minimum="0" Maximum="1"
+                                                Value="0.75"
+                                                Focusable="False"
+                                                ValueChanged="OnVolSliderValueChanged"
+                                                VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- 4. Quick Live Typing Stream (Docked at bottom of card) -->
+                                <Border Grid.Row="3"
+                                        VerticalAlignment="Bottom"
+                                        CornerRadius="4"
+                                        Background="#25040810"
+                                        BorderBrush="#3000F0FF"
+                                        BorderThickness="1"
+                                        Padding="6,3"
+                                        Margin="0,8,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="❯ " Foreground="#00FF88" FontWeight="Bold" FontSize="10" FontFamily="Consolas"/>
+                                            <TextBlock x:Name="TxtLiveStream"
+                                                       Text="CYBER_DECK READY — TYPE ANYWHERE"
+                                                       Foreground="#FFFFFF"
+                                                       FontSize="10"
+                                                       FontFamily="Consolas, monospace"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="TxtStats"
+                                                   Grid.Column="1"
+                                                   Text="KEYS: 0"
+                                                   Foreground="#00F0FF"
+                                                   FontWeight="SemiBold"
+                                                   FontSize="9"
+                                                   FontFamily="Consolas"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- ================= 2. CENTER: PLAYLIST & FILE TREE BROWSER (HIGH CONTRAST) ================= -->
+                        <Border Grid.Column="2"
+                                CornerRadius="7"
+                                Background="#F5080E1C"
+                                BorderBrush="#4000F0FF"
+                                BorderThickness="1.2"
+                                Padding="7,6">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/> <!-- Tab Headers: [ Playlist ] [ File Tree ] -->
+                                    <RowDefinition Height="*"/>    <!-- Content Area (Scrollbar Hidden) -->
+                                    <RowDefinition Height="Auto"/> <!-- Action Bar (Add Files, Add Folder, Clear) -->
+                                </Grid.RowDefinitions>
+
+                                <!-- Tab Headers -->
+                                <Grid Grid.Row="0" Margin="0,0,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border x:Name="TabPlaylistHeader"
+                                            CornerRadius="4"
+                                            Background="#3500F0FF"
+                                            BorderBrush="#6000F0FF"
+                                            BorderThickness="1"
+                                            Padding="7,3"
+                                            Margin="0,0,3,0"
+                                            Cursor="Hand"
+                                            MouseDown="OnTabPlaylistClick"
+                                            TouchDown="OnTabPlaylistTouch"
+                                            ToolTip="Parça Listesi">
+                                        <TextBlock x:Name="TxtTabPlaylist" Text="📑 LİSTE (0)" FontWeight="Bold" FontSize="10" Foreground="#FFFFFF"/>
+                                    </Border>
+
+                                    <Border x:Name="TabFileTreeHeader"
+                                            Grid.Column="1"
+                                            CornerRadius="4"
+                                            Background="#1800F0FF"
+                                            BorderBrush="#3500F0FF"
+                                            BorderThickness="1"
+                                            Padding="7,3"
+                                            Cursor="Hand"
+                                            MouseDown="OnTabFileTreeClick"
+                                            TouchDown="OnTabFileTreeTouch"
+                                            ToolTip="Bilgisayar Dosyaları / Computer Files">
+                                        <TextBlock x:Name="TxtTabFileTree" Text="📁 DOSYALAR" FontWeight="Bold" FontSize="10" Foreground="#A0D0F5"/>
+                                    </Border>
+
+                                    <!-- Drag Hint -->
+                                    <TextBlock x:Name="TxtDragHint"
+                                               Grid.Column="2"
+                                               Text="⬇️ Sürükleyin"
+                                               FontSize="9"
+                                               Foreground="#85B8DC"
+                                               FontWeight="SemiBold"
+                                               FontStyle="Italic"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,5,0"/>
+                                </Grid>
+
+                                <!-- CONTENT: Tab 1 (Playlist - SCROLLBAR HİDDEN) -->
+                                <Grid x:Name="TabPlaylistContent" Grid.Row="1">
+                                    <!-- Empty cue -->
+                                    <TextBlock x:Name="TxtEmptyPlaylistCue"
+                                               Text="Ses dosyalarını (.mp3, .wav, .flac) buraya sürükleyin"
+                                               Foreground="#85B5D8"
+                                               FontSize="11"
+                                               FontStyle="Italic"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               TextWrapping="Wrap"
+                                               TextAlignment="Center"
+                                               IsHitTestVisible="False"/>
+
+                                    <!-- SCROLLBAR'SIZ DOKUNMATİK PARÇA LİSTESİ -->
+                                    <ListBox x:Name="LstPlaylist"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Foreground="#FFFFFF"
+                                             Focusable="False"
+                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                             ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                             ScrollViewer.PanningMode="VerticalOnly"
+                                             MouseDoubleClick="OnPlaylistTrackDoubleClick">
+                                        <ListBox.ItemContainerStyle>
+                                             <Style TargetType="{x:Type ListBoxItem}">
+                                                 <Setter Property="Focusable" Value="False"/>
+                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                 <Setter Property="Padding" Value="0"/>
+                                                 <Setter Property="Margin" Value="0,1"/>
+                                                 <Setter Property="Template">
+                                                     <Setter.Value>
+                                                         <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                             <ContentPresenter/>
+                                                         </ControlTemplate>
+                                                     </Setter.Value>
+                                                 </Setter>
+                                             </Style>
+                                        </ListBox.ItemContainerStyle>
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type models:TrackItem}">
+                                                <Border x:Name="TrackBorder"
+                                                        CornerRadius="4"
+                                                        Padding="5,3"
+                                                        Margin="0,1"
+                                                        Background="#20040A18"
+                                                        BorderThickness="1"
+                                                        BorderBrush="#3500F0FF">
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                            <ColumnDefinition Width="Auto"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <!-- Play button -->
+                                                        <Button x:Name="BtnPlayTrack"
+                                                                Grid.Column="0"
+                                                                Content="▶"
+                                                                Width="20" Height="18"
+                                                                FontSize="10"
+                                                                Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                                Click="OnPlaylistItemPlayClick"
+                                                                Tag="{Binding}"
+                                                                Margin="0,0,4,0"
+                                                                ToolTip="Parçayı Çal / Duraklat"/>
+                                                        <!-- Index -->
+                                                        <TextBlock Grid.Column="1" Text="{Binding Index, StringFormat='#{0}'}" Foreground="#00F0FF" FontWeight="Bold" FontSize="10" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                                                        <!-- Track Title -->
+                                                        <TextBlock x:Name="TxtTitle" Grid.Column="2" Text="{Binding Title}" Foreground="#FFFFFF" FontSize="11" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                                                        <!-- Duration -->
+                                                        <TextBlock Grid.Column="3" Text="{Binding DurationString}" Foreground="#00FFCC" FontWeight="Bold" FontSize="10" FontFamily="Consolas" VerticalAlignment="Center" Margin="5,0,5,0"/>
+                                                        <!-- Remove button -->
+                                                        <Button Grid.Column="4"
+                                                                Content="✕"
+                                                                Width="18" Height="18"
+                                                                FontSize="9"
+                                                                Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                                Click="OnPlaylistItemRemoveClick"
+                                                                Tag="{Binding}"
+                                                                ToolTip="Listeden Çıkar"/>
+                                                    </Grid>
+                                                </Border>
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                                        <Setter TargetName="TrackBorder" Property="Background" Value="#4500F0FF"/>
+                                                        <Setter TargetName="TrackBorder" Property="BorderBrush" Value="#00F0FF"/>
+                                                        <Setter TargetName="BtnPlayTrack" Property="Content" Value="⏸"/>
+                                                        <Setter TargetName="TxtTitle" Property="Foreground" Value="#00FFCC"/>
+                                                        <Setter TargetName="TxtTitle" Property="FontWeight" Value="Bold"/>
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+
+                                <!-- CONTENT: Tab 2 (File Tree - SCROLLBAR HİDDEN) -->
+                                <Grid x:Name="TabFileTreeContent" Grid.Row="1" Visibility="Collapsed">
+                                    <!-- SCROLLBAR'SIZ DOKUNMATİK DOSYA AĞACI -->
+                                    <TreeView x:Name="TvComputerFiles"
+                                              Background="Transparent"
+                                              BorderThickness="0"
+                                              Foreground="#FFFFFF"
+                                              Focusable="False"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                              ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                              ScrollViewer.PanningMode="Both"
+                                              SelectedItemChanged="OnTreeSelectedItemChanged"
+                                              MouseDoubleClick="OnTreeItemDoubleClick">
+                                        <TreeView.ItemContainerStyle>
+                                            <Style TargetType="{x:Type TreeViewItem}">
+                                                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                                                <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="Padding" Value="2,2"/>
+                                                <Setter Property="Foreground" Value="#FFFFFF"/>
+                                            </Style>
+                                        </TreeView.ItemContainerStyle>
+                                        <TreeView.ItemTemplate>
+                                            <HierarchicalDataTemplate DataType="{x:Type models:FileTreeItem}" ItemsSource="{Binding Children}">
+                                                <Grid Margin="1,2" HorizontalAlignment="Stretch">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/> <!-- Icon -->
+                                                        <ColumnDefinition Width="*"/>    <!-- Text Name -->
+                                                        <ColumnDefinition Width="Auto"/> <!-- Action Buttons: [➕] for Folder, [▶][➕] for Audio -->
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!-- Icon -->
+                                                    <TextBlock Grid.Column="0" Text="{Binding Icon}" FontSize="12" Margin="0,0,5,0" VerticalAlignment="Center"/>
+
+                                                    <!-- Name (Tap expands folder or plays audio file) -->
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Name}"
+                                                               Foreground="#FFFFFF"
+                                                               FontWeight="SemiBold"
+                                                               FontSize="11"
+                                                               FontFamily="Segoe UI, Consolas"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center"
+                                                               Cursor="Hand"
+                                                               MouseDown="OnTreeItemTextClick"
+                                                               TouchDown="OnTreeItemTextTouch"/>
+
+                                                    <!-- Folder Actions: [➕] Add all tracks in folder to playlist and queue -->
+                                                    <StackPanel Grid.Column="2"
+                                                                Orientation="Horizontal"
+                                                                Visibility="{Binding AddFolderButtonVisibility}"
+                                                                Margin="4,0,0,0"
+                                                                VerticalAlignment="Center">
+                                                        <Button Content="➕"
+                                                                Width="22" Height="19"
+                                                                FontSize="10"
+                                                                Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                                Click="OnTreeFolderAddClick"
+                                                                Tag="{Binding}"
+                                                                ToolTip="Klasördeki Tüm Parçaları Listeye Ekle"/>
+                                                    </StackPanel>
+
+                                                    <!-- Audio File Actions: [▶] Play immediately, [➕] Add to queue -->
+                                                    <StackPanel Grid.Column="2"
+                                                                Orientation="Horizontal"
+                                                                Visibility="{Binding AudioFileButtonVisibility}"
+                                                                Margin="4,0,0,0"
+                                                                VerticalAlignment="Center">
+                                                        <Button Content="▶"
+                                                                Width="20" Height="19"
+                                                                FontSize="10"
+                                                                Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                                Click="OnTreeAudioPlayClick"
+                                                                Tag="{Binding}"
+                                                                Margin="0,0,2,0"
+                                                                ToolTip="Bu Parçayı Hemen Çal"/>
+                                                        <Button Content="➕"
+                                                                Width="20" Height="19"
+                                                                FontSize="10"
+                                                                Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                                Click="OnTreeAudioAddClick"
+                                                                Tag="{Binding}"
+                                                                ToolTip="Listeye Ekle"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </HierarchicalDataTemplate>
+                                        </TreeView.ItemTemplate>
+                                    </TreeView>
+                                </Grid>
+
+                                <!-- Action Bar -->
+                                <Grid Grid.Row="2" Margin="0,4,0,0">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <Button x:Name="BtnAddFiles" Content="➕ DOSYA" Style="{DynamicResource HudButtonStyle}" Padding="5,2" FontSize="9" Click="OnAddAudioFilesClick" ToolTip="Ses Dosyası Ekle"/>
+                                        <Button x:Name="BtnAddFolder" Content="📂 KLASÖR" Style="{DynamicResource HudButtonStyle}" Padding="5,2" FontSize="9" Click="OnAddAudioFolderClick" ToolTip="Klasördeki Sesleri Ekle"/>
+                                        <Button x:Name="BtnClearPlaylist" Content="🗑 TEMİZLE" Style="{DynamicResource HudButtonStyle}" Padding="5,2" FontSize="9" Click="OnClearPlaylistClick" ToolTip="Listeyi Temizle"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button x:Name="BtnPlaySelectedTreeItem"
+                                                Content="▶ OYNAT"
+                                                Style="{DynamicResource HudSpecialButtonStyle}"
+                                                Padding="5,2"
+                                                FontSize="9"
+                                                HorizontalAlignment="Right"
+                                                Visibility="Collapsed"
+                                                Click="OnPlaySelectedTreeItemClick"
+                                                Margin="0,0,3,0"/>
+                                        <Button x:Name="BtnAddSelectedTreeFolder"
+                                                Content="➕ EKLE"
+                                                Style="{DynamicResource HudSpecialButtonStyle}"
+                                                Padding="5,2"
+                                                FontSize="9"
+                                                HorizontalAlignment="Right"
+                                                Visibility="Collapsed"
+                                                Click="OnAddSelectedTreeFolderClick"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <!-- ================= 4. RIGHT: ŞIK DİJİTAL SAAT & AY TAKVİMİ HUD PANELİ (HIGH CONTRAST) ================= -->
+                        <Border Grid.Column="4"
+                                CornerRadius="7"
+                                Background="#F5080E1C"
+                                BorderBrush="#4500F0FF"
+                                BorderThickness="1.2"
+                                Padding="10,6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <!-- 0. DIGITAL CHRONO CLOCK -->
+                                    <ColumnDefinition Width="*"/>
+                                    <!-- 1. VERTICAL SEPARATOR -->
+                                    <ColumnDefinition Width="Auto"/>
+                                    <!-- 2. CYBER MONTH CALENDAR -->
+                                    <ColumnDefinition Width="230"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 0. DIGITAL CHRONO CLOCK -->
+                                <Grid Grid.Column="0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/> <!-- Top: Status, Size Selector & Timezone -->
+                                        <RowDefinition Height="*"/>    <!-- Center: Giant Digital Clock + Superscript Seconds + Format -->
+                                        <RowDefinition Height="Auto"/> <!-- Bottom: Day Badge, Full Date, Telemetry Info -->
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Top: Status Dot, Size Selector & Timezone -->
+                                    <Grid Grid.Row="0" Margin="0,0,0,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Status Indicator & Clock Size Dropdown -->
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Ellipse x:Name="ClockPulseDot" Width="7" Height="7" Fill="#00FF88" Margin="0,0,5,0"/>
+                                            <TextBlock Text="SYS_CHRONO // QUANTUM CLOCK"
+                                                       FontSize="8.5"
+                                                       FontWeight="Bold"
+                                                       Foreground="#00F0FF"
+                                                       FontFamily="Consolas, monospace"
+                                                       VerticalAlignment="Center"/>
+
+                                            <!-- Clock Size Dropdown -->
+                                            <ComboBox x:Name="CmbClockSize"
+                                                      Style="{DynamicResource CyberComboBoxStyle}"
+                                                      Width="86"
+                                                      Height="19"
+                                                      Margin="7,0,0,0"
+                                                      VerticalAlignment="Center"
+                                                      Focusable="False"
+                                                      SelectionChanged="OnClockSizeChanged"
+                                                      ToolTip="Saat Boyutu / Clock Size"/>
+                                        </StackPanel>
+
+                                        <!-- Timezone Info -->
+                                        <TextBlock x:Name="TxtClockTimezone"
+                                                   Grid.Column="2"
+                                                   Text="UTC+3 // LOCAL TIME"
+                                                   FontSize="8.5"
+                                                   FontWeight="Bold"
+                                                   Foreground="#A0D8F8"
+                                                   FontFamily="Consolas, monospace"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+
+                                    <!-- Center: Futuristic Digital Clock (High-Impact Scalable Display) -->
+                                    <Grid Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,2,0,3">
+                                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly" MaxHeight="130" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <!-- Large Hours & Minutes -->
+                                                <TextBlock x:Name="TxtClockHoursMinutes"
+                                                           Text="14:35"
+                                                           FontSize="80"
+                                                           FontWeight="Bold"
+                                                           FontFamily="Consolas, Segoe UI"
+                                                           Foreground="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                                           VerticalAlignment="Center"/>
+
+                                                <!-- Seconds & Format Badges -->
+                                                <StackPanel VerticalAlignment="Center" Margin="8,4,0,0">
+                                                    <!-- Superscript Seconds -->
+                                                    <TextBlock x:Name="TxtClockSeconds"
+                                                               Text=":00"
+                                                               FontSize="36"
+                                                               FontWeight="Bold"
+                                                               FontFamily="Consolas, Segoe UI"
+                                                               Foreground="#00FF88"/>
+
+                                                    <!-- Format Badge -->
+                                                    <Border CornerRadius="3"
+                                                            Background="#3500F0FF"
+                                                            Padding="5,1.5"
+                                                            Margin="0,3,0,0"
+                                                            HorizontalAlignment="Left">
+                                                        <TextBlock x:Name="TxtClockAmPm"
+                                                                   Text="24H"
+                                                                   FontSize="16"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="#00F0FF"
+                                                                   FontFamily="Consolas"/>
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Viewbox>
+                                    </Grid>
+
+                                    <!-- Bottom: Day Badge, Full Date & Cyber Telemetry -->
+                                    <Grid Grid.Row="2" Margin="0,2,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Day & Full Date -->
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <!-- Day Badge -->
+                                            <Border x:Name="ClockDayBadge"
+                                                    CornerRadius="4"
+                                                    Background="#3500F0FF"
+                                                    BorderBrush="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                                    BorderThickness="1"
+                                                    Padding="6,2"
+                                                    Margin="0,0,5,0">
+                                                <TextBlock x:Name="TxtClockDayOfWeek"
+                                                           Text="PAZAR // SUNDAY"
+                                                           FontSize="10.5"
+                                                           FontWeight="Bold"
+                                                           Foreground="#FFFFFF"
+                                                           FontFamily="Segoe UI, Consolas"/>
+                                            </Border>
+
+                                            <!-- Full Date -->
+                                            <TextBlock x:Name="TxtClockFullDate"
+                                                       Text="27 EYLÜL 2026"
+                                                       FontSize="11"
+                                                       FontWeight="Bold"
+                                                       Foreground="#FFFFFF"
+                                                       FontFamily="Segoe UI, Consolas"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <!-- Right Telemetry: Week, Day of Year, Uptime -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Border CornerRadius="3" Background="#2500F0FF" Padding="4,1" Margin="2,0">
+                                                <TextBlock x:Name="TxtClockWeek"
+                                                           Text="HAFTA 39"
+                                                           FontSize="8.5"
+                                                           FontWeight="Bold"
+                                                           Foreground="#00F0FF"
+                                                           FontFamily="Consolas"/>
+                                            </Border>
+                                            <Border CornerRadius="3" Background="#2500F0FF" Padding="4,1" Margin="2,0">
+                                                <TextBlock x:Name="TxtClockDayOfYear"
+                                                           Text="GÜN 270/365"
+                                                           FontSize="8.5"
+                                                           FontWeight="Bold"
+                                                           Foreground="#00F0FF"
+                                                           FontFamily="Consolas"/>
+                                            </Border>
+                                            <Border CornerRadius="3" Background="#2000FF88" Padding="4,1" Margin="2,0">
+                                                <TextBlock x:Name="TxtClockUptime"
+                                                           Text="UPTIME 00:15:30"
+                                                           FontSize="8.5"
+                                                           FontWeight="Bold"
+                                                           Foreground="#00FF88"
+                                                           FontFamily="Consolas"/>
+                                            </Border>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+
+                                <!-- 1. VERTICAL SEPARATOR -->
+                                <Rectangle Grid.Column="1" Width="1" Fill="#2000F0FF" Margin="8,2"/>
+
+                                <!-- 2. CYBER MONTH CALENDAR -->
+                                <Border x:Name="CyberCalendarContainer"
+                                        Grid.Column="2"
+                                        CornerRadius="5"
+                                        Background="#18040812"
+                                        BorderBrush="#2500F0FF"
+                                        BorderThickness="1"
+                                        Padding="5,3">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/> <!-- Month & Year Navigation -->
+                                            <RowDefinition Height="Auto"/> <!-- Weekdays Row -->
+                                            <RowDefinition Height="*"/>    <!-- Days UniformGrid -->
+                                        </Grid.RowDefinitions>
+
+                                        <!-- Month & Year Navigation -->
+                                        <Grid Grid.Row="0" Margin="0,0,0,3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Button x:Name="BtnCalPrevMonth"
+                                                    Grid.Column="0"
+                                                    Content="◀"
+                                                    Width="18" Height="17"
+                                                    Padding="0"
+                                                    FontSize="8"
+                                                    Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                    Focusable="False"
+                                                    Click="OnCalPrevMonthClick"
+                                                    ToolTip="Önceki Ay / Previous Month"/>
+
+                                            <TextBlock x:Name="TxtCalMonthYear"
+                                                       Grid.Column="1"
+                                                       Text="EYLÜL 2026"
+                                                       FontWeight="Bold"
+                                                       FontSize="9.5"
+                                                       FontFamily="Segoe UI, Consolas"
+                                                       Foreground="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Cursor="Hand"
+                                                       MouseDown="OnCalMonthTitleClick"
+                                                       ToolTip="Bugüne Dön / Return to Today"/>
+
+                                            <Button x:Name="BtnCalNextMonth"
+                                                    Grid.Column="2"
+                                                    Content="▶"
+                                                    Width="18" Height="17"
+                                                    Padding="0"
+                                                    FontSize="8"
+                                                    Style="{DynamicResource PlayerCtrlButtonStyle}"
+                                                    Focusable="False"
+                                                    Click="OnCalNextMonthClick"
+                                                    ToolTip="Sonraki Ay / Next Month"/>
+                                        </Grid>
+
+                                        <!-- Weekdays Row -->
+                                        <UniformGrid x:Name="CalWeekdayGrid"
+                                                     Grid.Row="1"
+                                                     Columns="7"
+                                                     Margin="0,0,0,2"/>
+
+                                        <!-- Days UniformGrid -->
+                                        <UniformGrid x:Name="CalDaysGrid"
+                                                     Grid.Row="2"
+                                                     Columns="7"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- ROW 2: ERGONOMIC KEYBOARD DECK CONTAINER (Maintains realistic key height) -->
+                <Grid x:Name="KeyboardDeckContainer" Grid.Row="2" VerticalAlignment="Bottom">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Function Row -->
+                        <RowDefinition Height="Auto"/> <!-- Main Deck + Nav/Numpad -->
+                    </Grid.RowDefinitions>
+
+                    <!-- FUNCTION ROW (Esc, F1 - F12, PrtScn) -->
+                    <Grid x:Name="FunctionRowGrid" Grid.Row="0" Margin="0,0,0,4" Height="38"/>
+
+                    <!-- MAIN KEYBOARD DECK + NUMPAD/NAVIGATION -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>    <!-- Main Layout Deck -->
+                            <ColumnDefinition Width="Auto" x:Name="ColNavNumpad"/> <!-- Nav & Numpad Cluster -->
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Main QWERTY / AZERTY / QWERTZ Area -->
+                        <Grid x:Name="MainDeckGrid" Grid.Column="0" Margin="0,0,4,0"/>
+
+                        <!-- Right Side: Navigation & Numeric Keypad -->
+                        <Grid x:Name="SideDeckGrid" Grid.Column="1" Margin="4,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/> <!-- Nav Cluster (Ins, Del, Arrows) -->
+                                <ColumnDefinition Width="Auto"/> <!-- Numeric Keypad -->
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Navigation Cluster -->
+                            <Grid x:Name="NavClusterGrid" Grid.Column="0" Width="170" Margin="0,0,5,0"/>
+
+                            <!-- Numeric Keypad -->
+                            <Grid x:Name="NumpadGrid" Grid.Column="1" Width="220"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+            </Grid>
+
+            <!-- Hardware-Accelerated CRT Scanline & Glitch Tearing Overlay (Active only in Retro-Futurist theme) -->
+            <Border x:Name="GlitchCrtOverlay"
+                    IsHitTestVisible="False"
+                    Visibility="Collapsed"
+                    CornerRadius="12">
+                <Border.Background>
+                    <DrawingBrush TileMode="Tile" Viewport="0,0,1,4" ViewportUnits="Absolute">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="#1A000000">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0,0,1,2"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                                <GeometryDrawing Brush="#0A00F0FF">
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0,2,1,2"/>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
+                </Border.Background>
+            </Border>
+        </Grid>
+    </Border>
+
+    <!-- Custom HUD & Player Styles -->
+    <Window.Resources>
+        <!-- MODERN CYBERPUNK SLIDER STYLE -->
+        <Style x:Key="ModernCyberSliderStyle" TargetType="{x:Type Slider}">
+            <Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Foreground" Value="#00F0FF"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid VerticalAlignment="Center">
+                            <!-- Background Track -->
+                            <Border x:Name="TrackBackground"
+                                    Height="4"
+                                    CornerRadius="2"
+                                    Background="#2200F0FF"
+                                    BorderBrush="#15FFFFFF"
+                                    BorderThickness="0.5"
+                                    VerticalAlignment="Center"/>
+
+                            <!-- Track with Filled Left & Empty Right -->
+                            <Track x:Name="PART_Track">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}">
+                                        <RepeatButton.Style>
+                                            <Style TargetType="{x:Type RepeatButton}">
+                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="IsTabStop" Value="False"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                            <Border Height="4"
+                                                                    CornerRadius="2"
+                                                                    Background="#9000F0FF"
+                                                                    VerticalAlignment="Center"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </RepeatButton.Style>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}">
+                                        <RepeatButton.Style>
+                                            <Style TargetType="{x:Type RepeatButton}">
+                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="IsTabStop" Value="False"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type RepeatButton}">
+                                                            <Border Background="Transparent"/>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </RepeatButton.Style>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb">
+                                        <Thumb.Style>
+                                            <Style TargetType="{x:Type Thumb}">
+                                                <Setter Property="OverridesDefaultStyle" Value="True"/>
+                                                <Setter Property="Focusable" Value="False"/>
+                                                <Setter Property="IsTabStop" Value="False"/>
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type Thumb}">
+                                                            <Grid Width="16" Height="16" Background="Transparent">
+                                                                <Ellipse x:Name="GlowRing" Width="14" Height="14" Fill="#3000F0FF"/>
+                                                                <Ellipse x:Name="CoreDot" Width="8" Height="8" Fill="#00F0FF" Stroke="#FFFFFF" StrokeThickness="1.5"/>
+                                                            </Grid>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="GlowRing" Property="Fill" Value="#7000F0FF"/>
+                                                                    <Setter TargetName="GlowRing" Property="Width" Value="16"/>
+                                                                    <Setter TargetName="GlowRing" Property="Height" Value="16"/>
+                                                                    <Setter TargetName="CoreDot" Property="Width" Value="10"/>
+                                                                    <Setter TargetName="CoreDot" Property="Height" Value="10"/>
+                                                                    <Setter TargetName="CoreDot" Property="Fill" Value="#FFFFFF"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsDragging" Value="True">
+                                                                    <Setter TargetName="GlowRing" Property="Fill" Value="#AA00F0FF"/>
+                                                                    <Setter TargetName="CoreDot" Property="Fill" Value="#00FFCC"/>
+                                                                    <Setter TargetName="CoreDot" Property="Width" Value="10"/>
+                                                                    <Setter TargetName="CoreDot" Property="Height" Value="10"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Thumb.Style>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="HudButtonStyle" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="#2500F0FF"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#5000F0FF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="7,3"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="4"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#5000F0FF"/>
+                    <Setter Property="Foreground" Value="#00FFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="HudSpecialButtonStyle" TargetType="Button" BasedOn="{StaticResource HudButtonStyle}">
+            <Setter Property="Background" Value="#35122E50"/>
+            <Setter Property="BorderBrush" Value="#00F0FF"/>
+            <Setter Property="Foreground" Value="#00F0FF"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style x:Key="PlayerCtrlButtonStyle" TargetType="Button" BasedOn="{StaticResource HudButtonStyle}">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="1,0"/>
+            <Setter Property="Background" Value="#2500F0FF"/>
+            <Setter Property="BorderBrush" Value="#4500F0FF"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+        </Style>
+
+        <Style x:Key="PlayerCtrlSpecialButtonStyle" TargetType="Button" BasedOn="{StaticResource HudSpecialButtonStyle}">
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="Background" Value="#3000F0FF"/>
+            <Setter Property="BorderBrush" Value="#00F0FF"/>
+            <Setter Property="Foreground" Value="#00F0FF"/>
+        </Style>
+
+        <Style x:Key="WindowMinCloseStyle" TargetType="Button">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="#20000000"/>
+            <Setter Property="Foreground" Value="#90B5D5"/>
+            <Setter Property="BorderBrush" Value="#2500F0FF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Width" Value="24"/>
+            <Setter Property="Height" Value="22"/>
+            <Setter Property="Margin" Value="2,0,0,0"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="4"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#60FF0055"/>
+                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- CYBERPUNK COMPACT COMBOBOX STYLE (FOCUS-FREE, ALWAYS DARK NEON) -->
+        <Style x:Key="CyberComboBoxStyle" TargetType="{x:Type ComboBox}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Background" Value="#F5070D18"/>
+            <Setter Property="BorderBrush" Value="#4500F0FF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#00F0FF"/>
+            <Setter Property="FontFamily" Value="Consolas, Segoe UI"/>
+            <Setter Property="FontSize" Value="9.5"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="5,1"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="{x:Type ComboBoxItem}">
+                        <Setter Property="Focusable" Value="False"/>
+                        <Setter Property="Padding" Value="6,3"/>
+                        <Setter Property="FontSize" Value="9.5"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="FontFamily" Value="Consolas, Segoe UI"/>
+                        <Setter Property="Foreground" Value="#FFFFFF"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                                    <Border x:Name="ItemBorder"
+                                            Background="{TemplateBinding Background}"
+                                            Padding="{TemplateBinding Padding}"
+                                            Margin="1,1"
+                                            CornerRadius="3">
+                                        <ContentPresenter/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="#4500F0FF"/>
+                                            <Setter Property="Foreground" Value="#00FFFF"/>
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="ItemBorder" Property="Background" Value="#6500F0FF"/>
+                                            <Setter Property="Foreground" Value="#FFFFFF"/>
+                                            <Setter Property="FontWeight" Value="Bold"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ComboBox}">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Focusable="False"
+                                          IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                        <Border x:Name="TemplateRoot"
+                                                CornerRadius="3"
+                                                Background="#F5070D18"
+                                                BorderBrush="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=BorderBrush}"
+                                                BorderThickness="{Binding RelativeSource={RelativeSource AncestorType=ComboBox}, Path=BorderThickness}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="14"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="1"
+                                                           Text="▾"
+                                                           FontSize="9"
+                                                           Foreground="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="TemplateRoot" Property="BorderBrush" Value="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"/>
+                                                <Setter TargetName="TemplateRoot" Property="Background" Value="#F80E1A2C"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="TemplateRoot" Property="BorderBrush" Value="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"/>
+                                                <Setter TargetName="TemplateRoot" Property="Background" Value="#F80E1A2C"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite"
+                                              IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="6,1,14,1"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
+                            <Popup x:Name="PART_Popup"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   Placement="Bottom"
+                                   PopupAnimation="Slide">
+                                <Border x:Name="DropDownBorder"
+                                        MinWidth="{TemplateBinding ActualWidth}"
+                                        MaxHeight="180"
+                                        Background="#F8060B16"
+                                        BorderBrush="{Binding Path=AccentBrush, Source={x:Static graphics:ThemeManager.Instance}}"
+                                        BorderThickness="1.2"
+                                        CornerRadius="4"
+                                        Margin="0,2,0,0">
+                                    <ScrollViewer Focusable="False" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="DropDownBorder" Property="MinHeight" Value="20"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+</Window>
