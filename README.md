@@ -4,6 +4,8 @@ A modern, futuristic, hardware-accelerated virtual keyboard for touchscreens, wi
 
 Turn your external touchscreen monitor into a standalone, modern, and responsive touch keyboard.
 
+![CyberKeyboard Screenshot](screenshot.png)
+
 ---
 
 ## 🚀 Key Features
